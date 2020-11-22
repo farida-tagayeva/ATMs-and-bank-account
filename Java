@@ -1,0 +1,296 @@
+package bitlab_frida;
+
+import java.util.Scanner;
+import java.util.SortedMap;
+
+public class CityBankATM {
+    public static void main(String[] args) {
+        Scanner in= new Scanner(System.in);
+
+        String accountNumber = in.next();
+        String pinCode = in.next();
+        BankAccount account = null;
+
+        for (int i=0; i<Database.allAccounts.length; i++){
+            if (Database.allAccounts[i].getAccountNumber().equals(accountNumber)
+                    && Database.allAccounts[i].getPinCode().equals(pinCode)) {
+
+                account =Database.allAccounts[i];
+                break;
+
+            }
+        }
+
+        while(true){
+            if (account instanceof CityBankAccount){
+                System.out.println("  PRESS [1] TO CASH WITHDRAWAL  // to remove the money\n" +
+                        "\n" +
+                        "               PRESS [2] TO VIEW BALANCE // view your balance\n" +
+                        "\n" +
+                        "               PRESS [3] TO CHANGE PIN CODE // to change the pin code\n" +
+                        "\n" +
+                        "               PRESS [4] TO CASH IN ACCOUNT // add money to your account\n" +
+                        "\n" +
+                        "               PRESS [5] TO VIEW ACCOUNT DATA // view account details\n" +
+                        "\n" +
+                        "               PRESS [6] TO EXIT // to exit\n" +
+                        "\n" +
+                        " ");
+
+
+                int choice = in.nextInt();
+
+                if( choice==1 ){
+                    int credit = in.nextInt();
+                    account.creditBalance(credit);
+                }else if( choice==2 ){
+                    System.out.println(account.totalBalance());
+                }else if( choice ==3){
+                    String newpinCode = in.next();
+                    account.setPinCode(newpinCode);
+                }else if ( choice==4 ){
+                    int debet = in.nextInt();
+                    account.debetBalance(debet);
+                }else if( choice==5 ){
+                    System.out.println(account.accountData());
+                }else{
+                    break;
+                }
+
+
+
+
+            }else {
+                System.out.println("PRESS [1] TO CASH WITHDRAWAL\n" +
+                        "\n" +
+                        "               PRESS [2] TO VIEW BALANCE\n" +
+                        "\n" +
+                        "               PRESS [3] TO EXIT");
+
+                int choice = in.nextInt();
+
+                if( choice==1 ){
+                    int credit = in.nextInt();
+                    account.creditBalance(credit);
+                }else if( choice==2 ){
+                    System.out.println(account.totalBalance());
+                }else{
+                    break;
+                }
+            }
+        }
+    }
+}
+
+package bitlab_frida;
+
+public interface BankAccount {
+
+    public String getAccountNumber(); // This method returns the account number
+    public String getPinCode(); // This method returns the pin code of the card
+    public void setPinCode(String pinCode); // This method changes the pin code of the card
+    public int totalBalance(); // This method returns the current balance
+    public void creditBalance(int credit); // We use this method when withdrawing money from your account
+    public void debetBalance(int debet); // We use this method when adding money to an account
+    public String accountData(); // This method returns data about the client
+}
+
+package bitlab_frida;
+
+public class CityBankAccount implements BankAccount  {
+
+     private String name;
+     private String surname;
+     private int balance;
+     private String accountNumber;
+     private String pinCode;
+
+    //Implementing all interface methods, creating constructors, getters, and setters
+
+    public CityBankAccount() {
+    }
+
+    public CityBankAccount(String name, String surname, int balance, String accountNumber, String pinCode) {
+        this.name = name;
+        this.surname = surname;
+        this.balance = balance;
+        this.accountNumber = accountNumber;
+        this.pinCode = pinCode;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
+    }
+
+    @Override
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    @Override
+    public String getPinCode() {
+        return pinCode;
+    }
+
+    @Override
+    public void setPinCode(String pinCode) {
+        this.pinCode = pinCode;
+    }
+
+    @Override
+    public int totalBalance() {
+        return balance;
+    }
+
+    @Override
+    public void creditBalance(int credit) {
+        if (balance>credit) balance-= credit;
+        else System.out.println("Not enough money");
+
+    }
+
+    @Override
+    public void debetBalance(int debet) {
+        balance+= debet;
+
+    }
+
+    @Override
+    public String accountData() {
+        return  "CityBankAccount{" +
+                "name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", balance=" + balance +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", pinCode='" + pinCode + '\'' +
+                '}';
+    }
+
+}
+
+package bitlab_frida;
+
+public class NationalBankAccount implements BankAccount{
+
+   private String fullName;
+   private int balance;
+   private String accountNumber;
+   private String pinCode;
+
+    //Implementing all interface methods, creating constructors, getters and setters
+
+
+    public NationalBankAccount() {
+    }
+
+    public NationalBankAccount(String fullName, int balance, String accountNumber, String pinCode) {
+        this.fullName = fullName;
+        this.balance = balance;
+        this.accountNumber = accountNumber;
+        this.pinCode = pinCode;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
+    }
+
+    @Override
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    @Override
+    public String getPinCode() {
+        return pinCode;
+    }
+
+    @Override
+    public void setPinCode(String pinCode) {
+        this.pinCode = pinCode;
+    }
+
+    @Override
+    public int totalBalance() {
+        return balance;
+    }
+
+    @Override
+    public void creditBalance(int credit) {
+        if (balance>credit) balance-= credit;
+        else System.out.println("Not enough money");
+    }
+
+    @Override
+    public void debetBalance(int debet) {
+        balance+=debet;
+
+    }
+
+    @Override
+    public String accountData() {
+        return "NationalBankAccount{" +
+                "fullName='" + fullName + '\'' +
+                ", balance=" + balance +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", pinCode='" + pinCode + '\'' +
+                '}';
+    }
+}
+
+package bitlab_frida;
+
+public class Database {
+    public static BankAccount allAccounts[] = new BankAccount[10];
+
+
+    static {
+        allAccounts[0]= new CityBankAccount("Marzhan","Tagayeva",250000,"KZ010603404","0603");
+        allAccounts[1]= new CityBankAccount("Farida","Tagayeva",400000,"KZ020926609","6202");
+        allAccounts[2]= new CityBankAccount("Ali","Amangeldin",450000,"KZ130902303","1309");
+        allAccounts[3]= new CityBankAccount("Aldiyar","Zulupkarov",450000,"KZ970404505","9704");
+        allAccounts[4]= new NationalBankAccount("Damir Zhumagazy",350000,"KZ031001101","0310");
+        allAccounts[5]= new NationalBankAccount("Ramina Rakhimova",280000,"KZ030707707","0307");
+
+    }
+
+}
